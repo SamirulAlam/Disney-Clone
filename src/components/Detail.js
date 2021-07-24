@@ -1,14 +1,29 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import {useParams} from 'react-router-dom';
+import db from '../firebase';
 
 function Detail() {
+
+    const {id}=useParams();
+    const [movie,setMovie]=useState();
+
+    useEffect(()=>{
+        db.collection("movies").doc(id).get().then((doc)=>{
+            if(doc.exists){
+                setMovie(doc.data())
+            }else{
+
+            }
+        })
+    },[])
     return (
         <Container>
             <Background>
-                <img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/4F39B7E16726ECF419DD7C49E011DD95099AA20A962B0B10AA1881A70661CE45/scale?width=1440&aspectRatio=1.78&format=jpeg" alt="" />
+                <img src={movie?.backgroundImg} alt="" />
             </Background>
             <ImageTitle>
-                <img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/D7AEE1F05D10FC37C873176AAA26F777FC1B71E7A6563F36C6B1B497CAB1CEC2/scale?width=1440&aspectRatio=1.78" alt="" />
+                <img src={movie?.titleImg} alt="" />
             </ImageTitle>
             <Controls>
                 <PlayButton>
@@ -27,10 +42,10 @@ function Detail() {
                 </GroupWatchButton>
             </Controls>
             <SubTitle>
-                    
+                {movie?.subTitle}    
             </SubTitle>
             <Description>
-
+                {movie?.description}
             </Description>
         </Container>
     )
@@ -39,15 +54,16 @@ function Detail() {
 export default Detail
 
 const Container=styled.div`
-    min-height:calc(100vh - 70px);
+    min-height:calc(100vh - 130px);
     padding: 0 calc(3.5vw + 5px);
     position: relative;
 `;
 
 const Background=styled.div`
     position: fixed;
-    top: 0;
-    left: 0;bottom: 0;
+    top: 70px;
+    left: 0;
+    bottom: 0;
     right: 0;
     z-index:-2;
     opacity: 0.8;
@@ -65,6 +81,7 @@ const ImageTitle=styled.div`
     min-height: 170px;
     width: 35vw;
     min-width: 200px;
+    margin-top:60px;
 
     img{
         width: 100%;
@@ -137,4 +154,5 @@ const Description=styled.div`
     font-size:20px;
     margin-top:16px;
     color:rgb(249,249,249);
+    max-width:760px;
 `;
